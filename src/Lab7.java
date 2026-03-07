@@ -64,9 +64,56 @@ public class Lab7
      */
     private static int[] problem2(Graph g, int startId)
     {
-    
-        // Implement me!
-        return new int[] {};
+
+       // This returns three arrays=: parIds, preOrder, postOrder
+       int[][] dfs = g.dfs(startId);
+
+       // We only need postorder, since we want a topological order. We will loop backwards through this to get topological order
+       int[] topSort = dfs[2];
+
+        // Initialize dist length to the total number of vertices
+       int[] dist = new int[g.noOfVertices];
+
+
+       // Make all of the distances equal to the max integer value in java
+       for (int i = 0; i < g.noOfVertices; i++) {
+           dist[i] = Integer.MAX_VALUE;
+       }
+
+        // Only assign 0 to our starting point
+       dist[startId] = 0;
+
+
+       // For our outer loop, we will go through all of our vertices. We loop in reverse to start with our start node
+       for (int i = topSort.length - 1; i >= 0; i--) {
+
+           // We grab the vertices index from the topSort array.
+           int v = topSort[i];
+
+           // We check that v is not -1. If it is -1, that means that we were not able to reach that node from the starting node
+           if (v == -1) continue;
+
+           // We will then loop through that vertices edges
+           for (int j = 0; j < g.edges[v].length; j++) {
+
+               // We will relax all edges of the vertices
+               // We pass in the vertices index, the index for the edge, and the dist array
+               // The dist array is updated in the relax function.
+               g.relax(v, j, dist);
+
+           }
+       }
+
+        // Return the updated dist array
+       return dist;
+
+       /*
+          This algorithm works since our graph is a DAG, meaning there is no cycles.
+          If we go through in topological order, then we are only having to update distances once
+          since we will not return to those.
+
+        */
+
         
     }
 
